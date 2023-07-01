@@ -1,8 +1,8 @@
 CC=				clang
 CFLAGS=			-g
 
-NAME=			tester
-SRCS=			$(wildcard srcs/*.c)
+NAME=			minishell
+SRCS=			lol.c
 OBJS= 			${SRCS:.c=.o}
 
 YELLOW=\033[38;5;226m
