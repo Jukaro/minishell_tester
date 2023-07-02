@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   unit.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jfarkas <jfarkas@student.42.fr>            +#+  +:+       +#+        */
+/*   By: jfarkas <jfarkas@student.42angouleme.fr    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/30 19:26:54 by jfarkas           #+#    #+#             */
-/*   Updated: 2023/07/02 19:08:19 by jfarkas          ###   ########.fr       */
+/*   Updated: 2023/07/02 23:13:34 by jfarkas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -212,6 +212,15 @@ void	test_line(char **cmd_line, char **tests, char **envp, t_parameters p)
 	waitpid(pid, NULL, 0);
 }
 
+char	*ft_strchrset(char *str, char *set)
+{
+	for (int i = 0; str[i]; i++)
+		for (int j = 0; set[j]; j++)
+			if (str[i] == set[j])
+				return (&str[i]);
+	return (NULL);
+}
+
 void	parse_line(t_test *test, char *str)
 {
 	int	first_arg;
@@ -221,16 +230,27 @@ void	parse_line(t_test *test, char *str)
 	first_arg_ptr = ft_strchr(str, '-');
 	first_arg = first_arg_ptr ? first_arg_ptr - str : -1;
 
+	test->timeout = 1000;
+	test->need_answer = 1;
+	test->check_method = "cmp";
 	if (first_arg == -1)
-		test->cmd = ft_strdup(str);
+		test->cmd = ft_substr(str, 0, ft_strlen(str) - 1);
 	else
 	{
+		test->cmd = ft_substr(str, 0, first_arg);
 		for (int i = 0; str[i]; i++)
 		{
 			if (str[i] == '-')
 			{
-				arg = ft_substr(&str[i], ft_strchr(&str[i], ' '));
+				arg = ft_substr(&str[i], 0, ft_strchrset(&str[i], " \t\n") - &str[i]);
+				if (!ft_strncmp("-timeout=", arg, 9) && ft_isdigit(str[i + 9]))
+				{
+					test->timeout = ft_atoi(&str[i + 9]);
+					printf("atoi : %d\n", ft_atoi(&str[i + 9]));
+					printf("timeout : %d\n", test->timeout);
+				}
 				i += ft_strlen(arg);
+				free(arg);
 			}
 		}
 	}

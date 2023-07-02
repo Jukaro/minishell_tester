@@ -3,14 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line_utils_bonus.c                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jfarkas <jfarkas@student.42.fr>            +#+  +:+       +#+        */
+/*   By: jfarkas <jfarkas@student.42angouleme.fr    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/09 04:51:06 by jfarkas           #+#    #+#             */
-/*   Updated: 2022/11/11 13:44:28 by jfarkas          ###   ########.fr       */
+/*   Updated: 2023/07/02 20:27:04 by jfarkas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stddef.h>
+#include "libft.h"
 
 int	ft_strlen_end(const char *str, char stop_count)
 {
@@ -22,34 +23,34 @@ int	ft_strlen_end(const char *str, char stop_count)
 	return (size);
 }
 
-char	*ft_strchr(const char *s, int c)
-{
-	int	i;
+// char	*ft_strchr(const char *s, int c)
+// {
+// 	int	i;
 
-	i = 0;
-	while (s[i] != '\0')
-	{
-		if (s[i] == c)
-			return (&((char *)s)[i]);
-		i++;
-	}
-	if (s[i] == c)
-		return (&((char *)s)[i]);
-	return ((void *)0);
-}
+// 	i = 0;
+// 	while (s[i] != '\0')
+// 	{
+// 		if (s[i] == c)
+// 			return (&((char *)s)[i]);
+// 		i++;
+// 	}
+// 	if (s[i] == c)
+// 		return (&((char *)s)[i]);
+// 	return ((void *)0);
+// }
 
-void	ft_bzero(void *s, size_t n)
-{
-	size_t	i;
+// void	ft_bzero(void *s, size_t n)
+// {
+// 	size_t	i;
 
-	i = 0;
-	while (i < n)
-	{
-		*(char *)s = 0;
-		s++;
-		i++;
-	}
-}
+// 	i = 0;
+// 	while (i < n)
+// 	{
+// 		*(char *)s = 0;
+// 		s++;
+// 		i++;
+// 	}
+// }
 
 size_t	gnl_ft_strlcat(char *dest, const char *src, size_t size)
 {
