@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   unit.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jfarkas <jfarkas@student.42.fr>            +#+  +:+       +#+        */
+/*   By: jfarkas <jfarkas@student.42angouleme.fr    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/30 19:26:54 by jfarkas           #+#    #+#             */
-/*   Updated: 2023/07/01 19:22:59 by jfarkas          ###   ########.fr       */
+/*   Updated: 2023/07/02 14:30:57 by jfarkas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,26 +93,29 @@ char	*get_str_from_fd(int fd, int mult_lines, int msec)
 	}
 	if (new_line)
 		free(new_line);
+	// printf("str : %s\n", str);
 	return (str);
 }
 
-t_result	test(int child_in, int child_out, int valg_out, char *cmd, t_parameters p)
+t_result	test(int child_in, int child_out, int child_error, int valg_out, char *cmd, t_parameters p)
 {
 	t_result	res;
 	char	*request;
 
 	res.answer = NULL;
-	res.errors = NULL;
+	res.error = NULL;
 	res.valgrind = NULL;
 	res.prompt = NULL;
 	if (p.test)
 		ft_printf("testing %s ...\n", cmd);
 	request = ft_strjoin(cmd, "\n");
 	ft_putstr_fd(request, child_in);
-	res.prompt = get_str_from_fd(child_out, 0, 1000);
-	if (res.prompt)
-	{
+	// printf("getting prompt.\n");
+	// res.prompt = get_str_from_fd(child_out, 0, 1000);
+	// if (res.prompt)
+	// {
 		res.answer = get_str_from_fd(child_out, 1, p.answer_timeout);
+		res.error = get_str_from_fd(child_error, 1, 0);
 		if (p.valgrind)
 		{
 			if (ft_strncmp(cmd, "exit", 4))
@@ -120,7 +123,7 @@ t_result	test(int child_in, int child_out, int valg_out, char *cmd, t_parameters
 			else
 				res.valgrind = get_str_from_fd(valg_out, 1, 1000);
 		}
-	}
+	// }
 	free(request);
 	return (res);
 }
@@ -138,7 +141,6 @@ void	start_minishell(char **cmd_line, char **envp, pid_t *pid, int request[2], i
 		close(child_error[1]);
 		close(child_error[0]);
 		close(valgrind[0]);
-		// close(valgrind[1]);
 		close(request[1]);
 		if (execve(cmd_line[0], cmd_line, envp) == -1)
 			perror("execve");
@@ -147,7 +149,6 @@ void	start_minishell(char **cmd_line, char **envp, pid_t *pid, int request[2], i
 	close(child_out[1]);
 	close(child_error[1]);
 	close(valgrind[1]);
-	// close(valgrind[0]);
 }
 
 void	setup_pipes(int request[2], int child_out[2], int child_error[2], int valgrind[2])
@@ -176,12 +177,12 @@ void	test_line(char **cmd_line, char **tests, char **envp, t_parameters p)
 	setup_pipes(request, child_out, child_error, valgrind);
 	start_minishell(cmd_line, envp, &pid, request, child_out, child_error, valgrind);
 
-	printf("valgrind[1] : %d\n", valgrind[1]);
+	// printf("valgrind[1] : %d\n", valgrind[1]);
 	if (p.valgrind)
-		print_valgrind_start(child_error[0]);
+		print_valgrind_start(valgrind[0]);
 	for (int i = 0; tests[i]; i++)
 	{
-		res = test(request[1], child_out[0], child_error[0], tests[i], p);
+		res = test(request[1], child_out[0], child_error[0], valgrind[0], tests[i], p);
 		if (p.answers)
 			ft_printf("answer : %s\n", res.answer);
 		if (res.valgrind)
@@ -193,8 +194,8 @@ void	test_line(char **cmd_line, char **tests, char **envp, t_parameters p)
 		}
 		if (res.answer)
 			free(res.answer);
-		if (res.errors)
-			free(res.errors);
+		if (res.error)
+			free(res.error);
 		if (res.valgrind)
 			free(res.valgrind);
 		if (res.prompt)
@@ -211,8 +212,8 @@ void	test_line(char **cmd_line, char **tests, char **envp, t_parameters p)
 	// si exit ne close pas ?
 	if (res.answer)
 		free(res.answer);
-	if (res.errors)
-		free(res.errors);
+	if (res.error)
+		free(res.error);
 	if (res.valgrind)
 		free(res.valgrind);
 	if (res.prompt)
@@ -226,7 +227,8 @@ void	test_line(char **cmd_line, char **tests, char **envp, t_parameters p)
 
 int main(int argc, char **argv, char **envp)
 {
-	char	*minishell = "/bin/valgrind --log-fd=10 ./minishell/minishell --leak-check=full";
+	// char	*minishell = "/bin/valgrind --log-fd=10 ./minishell/minishell --leak-check=full";
+	char	*minishell = "/bin/valgrind --log-fd=10 /bin/bash";
 	char	**cmd_line = ft_split(minishell, ' ');
 	char	**tests;
 	char	*line;

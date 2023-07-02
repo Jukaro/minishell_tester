@@ -32,7 +32,7 @@ typedef struct s_result
 	char	*prompt;
 	char	*answer;
 	char	*valgrind;
-	char	*errors;
+	char	*error;
 }	t_result;
 
 t_parameters	init_parameters(int argc, char **argv);
