@@ -5,4 +5,11 @@
 # -cmd="echo bonjour" -timeout=10 -res=cmp("bonjour"); -cmd="export toto=lol" -res=no_answer(); -cmd="export" -timeout=10 -res=find(toto);
 #lol;lol;lol;lol;lol;lol;lol;lol;exit
 #sfdgufds;lol1;long answer;lol2;jsp;lol3;lol4;wowo;invalid write;lol;exit
-export toto="a   b";export;cat out2;echo "coucou";export jsp;export;exit;
+export toto="a   b"
+export
+cat out
+cat out2
+echo $toto
+export jsp
+export
+exit

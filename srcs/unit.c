@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   unit.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jfarkas <jfarkas@student.42angouleme.fr    +#+  +:+       +#+        */
+/*   By: jfarkas <jfarkas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/30 19:26:54 by jfarkas           #+#    #+#             */
-/*   Updated: 2023/07/02 14:30:57 by jfarkas          ###   ########.fr       */
+/*   Updated: 2023/07/02 19:08:19 by jfarkas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,16 +69,17 @@ char	*get_str_from_fd(int fd, int mult_lines, int msec)
 	timeout = 0;
 	while (!new_line && !timeout)
 	{
-		usleep(1000);
 		gettimeofday(&tv2, NULL);
 		elapsed_time = (tv2.tv_sec - tv1.tv_sec) * 1000;
 		elapsed_time += (tv2.tv_usec - tv1.tv_usec) / 1000;
 		if (elapsed_time > msec)
 			timeout = 1;
 		new_line = get_next_line(fd);
+		usleep(1000);
 	}
 	// printf("%f ms.\n", elapsed_time);
 	str = ft_strjoin(str, new_line);
+	usleep(500);
 	while (new_line && mult_lines)
 	{
 		usleep(100);
@@ -172,34 +173,27 @@ void	test_line(char **cmd_line, char **tests, char **envp, t_parameters p)
 	int			child_out[2];
 	int			child_error[2];
 	int			valgrind[2];
+	int			error;
+	int			error_count; // a mettre dans struct
 	t_result	res;
 
 	setup_pipes(request, child_out, child_error, valgrind);
 	start_minishell(cmd_line, envp, &pid, request, child_out, child_error, valgrind);
 
+	error_count = 0;
 	// printf("valgrind[1] : %d\n", valgrind[1]);
 	if (p.valgrind)
 		print_valgrind_start(valgrind[0]);
 	for (int i = 0; tests[i]; i++)
 	{
 		res = test(request[1], child_out[0], child_error[0], valgrind[0], tests[i], p);
-		if (p.answers)
-			ft_printf("answer : %s\n", res.answer);
-		if (res.valgrind)
-		{
-			if (strstr(res.valgrind, "SUMMARY"))
-				break ;
-			else
-				ft_printf("errors : \n%s", res.valgrind);
-		}
-		if (res.answer)
-			free(res.answer);
-		if (res.error)
-			free(res.error);
-		if (res.valgrind)
-			free(res.valgrind);
-		if (res.prompt)
-			free(res.prompt);
+		print_result(&res, &p);
+		error = check_valgrind_errors(&res);
+		if (error == 2)
+			break ;
+		else if (error)
+			error_count++;
+		free_res(&res);
 	}
 	if (res.valgrind)
 	{
@@ -210,19 +204,65 @@ void	test_line(char **cmd_line, char **tests, char **envp, t_parameters p)
 		ft_printf("%s", res.valgrind);
 	}
 	// si exit ne close pas ?
-	if (res.answer)
-		free(res.answer);
-	if (res.error)
-		free(res.error);
-	if (res.valgrind)
-		free(res.valgrind);
-	if (res.prompt)
-		free(res.prompt);
+	free_res(&res);
 	close(request[1]);
 	close(child_out[0]);
 	close(child_error[0]);
 	close(valgrind[0]);
 	waitpid(pid, NULL, 0);
+}
+
+void	parse_line(t_test *test, char *str)
+{
+	int	first_arg;
+	char	*first_arg_ptr;
+	char	*arg;
+
+	first_arg_ptr = ft_strchr(str, '-');
+	first_arg = first_arg_ptr ? first_arg_ptr - str : -1;
+
+	if (first_arg == -1)
+		test->cmd = ft_strdup(str);
+	else
+	{
+		for (int i = 0; str[i]; i++)
+		{
+			if (str[i] == '-')
+			{
+				arg = ft_substr(&str[i], ft_strchr(&str[i], ' '));
+				i += ft_strlen(arg);
+			}
+		}
+	}
+}
+
+t_test	**parse_testfile(char *file)
+{
+	t_test	**tests;
+	t_test	*new_test;
+	char	*str;
+	int		fd;
+	int		id;
+
+	fd = open(file, O_RDONLY);
+	str = "init";
+	id = 0;
+	tests = malloc(sizeof(t_test *));
+	*tests = NULL;
+	for (int i = 0; str; i++)
+	{
+		str = get_next_line(fd);
+		if (str && str[0] != '#')
+		{
+			new_test = ft_testnew();
+			parse_line(new_test, str);
+			ft_testadd_back(tests, new_test);
+		}
+		if (str)
+			free(str);
+	}
+	close(fd);
+	return (tests);
 }
 
 int main(int argc, char **argv, char **envp)
@@ -233,35 +273,45 @@ int main(int argc, char **argv, char **envp)
 	char	**tests;
 	char	*line;
 	int		tests_file;
+	t_test	**tests2;
 	t_parameters	p;
 
 	p = init_parameters(argc, argv);
 
-	tests_file = open("test.txt", O_RDONLY);
-	tests = ft_split("init", ':');
+	tests2 = parse_testfile("test.txt");
+
+	t_test	*ptr;
+
+	ptr = *tests2;
+	for ( ; ptr; ptr = ptr->next)
+		printf("str : %s\n", ptr->cmd);
+	ft_testclear(tests2);
+	free(tests2);
+	// tests_file = open("test.txt", O_RDONLY);
+	// tests = ft_split("init", ':');
 
 	struct timeval tv1, tv2;
 	double	elapsed_time;
 	gettimeofday(&tv1, NULL);
 
-	for (int i = 0; tests[0]; i++)
-	{
-		free_double_array(tests);
-		line = get_next_line(tests_file);
-		tests = ft_split(line, ';');
-		if (tests[0] && tests[0][0] != '#')
-		{
-			// ft_printf("\n------ testing line %d ------\n\n", i);
-			test_line(cmd_line, tests, envp, p);
-		}
-		free(line);
-	}
-	free_double_array(tests);
+	// for (int i = 0; tests[0]; i++)
+	// {
+	// 	free_double_array(tests);
+	// 	line = get_next_line(tests_file);
+	// 	tests = ft_split(line, ';');
+	// 	if (tests[0] && tests[0][0] != '#')
+	// 	{
+	// 		// ft_printf("\n------ testing line %d ------\n\n", i);
+	// 		// test_line(cmd_line, tests, envp, p);
+	// 	}
+	// 	free(line);
+	// }
+	// free_double_array(tests);
 	free_double_array(cmd_line);
 	gettimeofday(&tv2, NULL);
 	elapsed_time = (tv2.tv_sec - tv1.tv_sec);
 	elapsed_time += (tv2.tv_usec - tv1.tv_usec) / 1000000.0;
-	// printf("total : %.3fs.\n", elapsed_time);
+	printf("total : %.3fs.\n", elapsed_time);
 	close(tests_file);
 	return (0);
 }
