@@ -16,14 +16,15 @@ lol1					<<<<>>>>	-no_answer
 lol2					<<<<>>>>	-no_answer
 '$toto'					<<<<>>>>	-no_answer
 stop					<<<<>>>>	-no_answer
-echo $toto				<<<<>>>>	
-echo "$toto"			<<<<>>>>	
-echo '$toto'			<<<<>>>>	
-export $toto=$toto		<<<<>>>>			
-export 78 abc			<<<<>>>>	
-export					<<<<>>>>	
+echo $toto				<<<<>>>>
+echo "$toto"			<<<<>>>>
+echo '$toto'			<<<<>>>>
+echo -nnnnn salut		<<<<>>>>
+export $toto=$toto		<<<<>>>>
+export 78 abc			<<<<>>>>
+export					<<<<>>>>
 stop					<<<<>>>>	-result="lol1"
 export jsp				<<<<>>>>	-no_answer
 export					<<<<>>>>	-result="jsp"
-ls						<<<<>>>>	
+ls						<<<<>>>>
 exit					<<<<>>>>	-no_answer

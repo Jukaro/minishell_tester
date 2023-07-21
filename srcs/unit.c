@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   unit.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jfarkas <marvin@42.fr>                     +#+  +:+       +#+        */
+/*   By: jfarkas <jfarkas@student.42angouleme.fr    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/30 19:26:54 by jfarkas           #+#    #+#             */
-/*   Updated: 2023/07/20 12:26:01 by jfarkas          ###   ########.fr       */
+/*   Updated: 2023/07/21 16:06:37 by jfarkas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ t_result	test(int child_in, int child_out, int child_error, int valg_out, t_test
 	if (test->index == 1)
 		usleep(100000);
 	usleep(20000); // echo lent ??
-	res.prompt = get_prompt(child_out, test->cmd, 10);
+	res.prompt = get_prompt(child_out, test->cmd, 10); // jsuis trop con y'a pas tt le temps de newline faut refaire gnl
 	printf("prompt : %s\n", res.prompt);
 	// if (res.prompt)
 	// {
@@ -131,10 +131,18 @@ int main(int argc, char **argv, char **envp)
 	// gerer les signaux SIGINT et autres
 
 	tests = parse_testfile("test.txt", &p);
+
+	// int	i = 0;
+	// for (t_test *ptr = *tests; ptr; ptr = ptr->next)
+	// {
+	// 	printf("test %d : %s | result : %s\n", i, ptr->cmd, ptr->result);
+	// 	i++;
+	// }
+
 	test_line(cmd_line, tests, envp, p);
 	// for (int i = 0; i < tests_nb; i++)
 	// {
-	// 	// ft_printf("\n------ testing line %d ------\n\n", i);
+		// ft_printf("\n------ testing line %d ------\n\n", i);
 	// 	test_line(cmd_line, tests2, envp, p);
 	// }
 	// id valgrind pour afficher valgrind trace childs

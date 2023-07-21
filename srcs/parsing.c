@@ -2,19 +2,19 @@
 
 static void	parse_line(t_test *test, char *str)
 {
-	int		first_arg;
-	char	*first_arg_ptr;
+	int		sep;
+	char	*sep_ptr;
 	char	*arg;
 	char	*tmp;
 
-	first_arg_ptr = ft_strchr(str, '-');
-	first_arg = first_arg_ptr ? first_arg_ptr - str : -1;
+	sep_ptr = strstr(str, "<<<<>>>>");
+	sep = sep_ptr ? sep_ptr - str : -1;
 
 	test->timeout = 1000;
 	test->need_answer = 1;
 	test->check_method = CMP;
 	test->result = NULL;
-	if (first_arg == -1)
+	if (sep == -1)
 	{
 		tmp = ft_substr(str, 0, ft_strlen(str) - 1);
 		test->cmd = ft_strtrim(tmp, " \t\n");
@@ -22,10 +22,10 @@ static void	parse_line(t_test *test, char *str)
 	}
 	else
 	{
-		tmp = ft_substr(str, 0, first_arg);
+		tmp = ft_substr(str, 0, sep);
 		test->cmd = ft_strtrim(tmp, " \t\n");
 		free(tmp);
-		for (int i = 0; str[i]; i++)
+		for (int i = sep + 8; str[i]; i++)
 		{
 			if (str[i] == '-')
 			{
@@ -47,7 +47,7 @@ static void	parse_line(t_test *test, char *str)
 
 void	get_valgrind(char *str, t_parameters *p)
 {
-	
+
 }
 
 t_test	**parse_testfile(char *file, t_parameters *p)
