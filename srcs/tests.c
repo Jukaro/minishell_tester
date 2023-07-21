@@ -39,6 +39,8 @@ void	ft_testclear(t_test **lst)
 	while (ptr != NULL)
 	{
 		free(ptr->cmd);
+		if (ptr->result)
+			free(ptr->result);
 		before_elem = ptr;
 		ptr = ptr->next;
 		free(before_elem);

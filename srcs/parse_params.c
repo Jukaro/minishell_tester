@@ -8,8 +8,8 @@ t_parameters	init_parameters(int argc, char **argv)
 	p.answers = 1;
 	p.test = 1;
 
-	p.valg_timeout = 5;
+	p.valg_timeout = 15;
 	p.answer_timeout = 1000;
-
+	p.valgrind_line = NULL;
 	return (p);
 }

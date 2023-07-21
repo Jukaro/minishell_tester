@@ -1,0 +1,12 @@
+#export yomec		-no_answer
+#export
+ls xd > out
+cat out
+ls					
+cat out
+ls > out			-no_answer
+cat out
+ls > out2			-no_answer
+cat out2
+#echo salut
+exit
