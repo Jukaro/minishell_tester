@@ -6,7 +6,7 @@
 /*   By: jfarkas <jfarkas@student.42angouleme.fr    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/30 19:26:54 by jfarkas           #+#    #+#             */
-/*   Updated: 2023/07/21 16:06:37 by jfarkas          ###   ########.fr       */
+/*   Updated: 2023/07/23 15:14:23 by jfarkas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,8 +113,9 @@ int main(int argc, char **argv, char **envp)
 	// char	*minishell = "/bin/valgrind --log-fd=9  --leak-check=full ./minishell/minishell";
 	// char	*minishell = "/bin/valgrind --log-fd=9 /bin/bash -i"; // mettre le fd dynamiquement
 	// char	*minishell = "/bin/bash -i"; // mettre le fd dynamiquement
-	char	*minishell = "/bin/valgrind --log-fd=9 --leak-check=full --show-leak-kinds=all --trace-children=yes --track-fds=yes --suppressions=../minishell/vsupp ./minishell/minishell_damien";
+	// char	*minishell = "/bin/valgrind --log-fd=9 --leak-check=full --show-leak-kinds=all --trace-children=yes --track-fds=yes --suppressions=../minishell/vsupp ./minishell/minishell_damien";
 	// char	*minishell = "/bin/valgrind --log-fd=9 --leak-check=full --show-leak-kinds=all --suppressions=../minishell/vsupp /bin/bash -i";
+	char	*minishell = "./minishell/minishell_damien";
 	char	**cmd_line = ft_split(minishell, ' ');
 	char	*line;
 	int		tests_file;

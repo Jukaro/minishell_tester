@@ -4,7 +4,7 @@ t_parameters	init_parameters(int argc, char **argv)
 {
 	t_parameters p;
 
-	p.valgrind = 1;
+	p.valgrind = 0;
 	p.answers = 1;
 	p.test = 1;
 

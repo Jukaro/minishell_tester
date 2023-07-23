@@ -11,15 +11,15 @@ cat out 				<<<<>>>>	-result=""
 echo $?					<<<<>>>>	-result="1"
 cat out2 				<<<<>>>>	-result="   "
 echo $?					<<<<>>>>	-result="0"
-<< stop					<<<<>>>>	-no_answer
+cat << stop				<<<<>>>>	-no_answer
 lol1					<<<<>>>>	-no_answer
 lol2					<<<<>>>>	-no_answer
 '$toto'					<<<<>>>>	-no_answer
-stop					<<<<>>>>	-no_answer
+stop					<<<<>>>>
 echo $toto				<<<<>>>>
 echo "$toto"			<<<<>>>>
 echo '$toto'			<<<<>>>>
-echo -nnnnn salut		<<<<>>>>
+#echo -nnnnn salut		<<<<>>>>
 export $toto=$toto		<<<<>>>>
 export 78 abc			<<<<>>>>
 export					<<<<>>>>
