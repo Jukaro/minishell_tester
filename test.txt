@@ -9,16 +9,17 @@ export toto="a   b" 	<<<<>>>>	-no_answer
 export 					<<<<>>>>	-result="\"a   b\""
 cat out 				<<<<>>>>	-result=""
 echo $?					<<<<>>>>	-result="1"
+ls > out2				<<<<>>>>	-no_answer
 cat out2 				<<<<>>>>	-result="   "
 echo $?					<<<<>>>>	-result="0"
-cat << stop				<<<<>>>>	-no_answer
+<< stop	       			<<<<>>>>	-no_answer
 lol1					<<<<>>>>	-no_answer
 lol2					<<<<>>>>	-no_answer
 '$toto'					<<<<>>>>	-no_answer
-stop					<<<<>>>>
-echo $toto				<<<<>>>>
-echo "$toto"			<<<<>>>>
-echo '$toto'			<<<<>>>>
+stop					<<<<>>>>	-no_answer
+echo $toto				<<<<>>>>	-result="a b"
+echo "$toto"			<<<<>>>>	-result="a   b"
+echo '$toto'			<<<<>>>>	-result="$toto"
 #echo -nnnnn salut		<<<<>>>>
 export $toto=$toto		<<<<>>>>
 export 78 abc			<<<<>>>>
@@ -27,4 +28,5 @@ stop					<<<<>>>>	-result="lol1"
 export jsp				<<<<>>>>	-no_answer
 export					<<<<>>>>	-result="jsp"
 ls						<<<<>>>>
+rm out2                 <<<<>>>>    -no_answer
 exit					<<<<>>>>	-no_answer

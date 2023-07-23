@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   unit.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jfarkas <jfarkas@student.42angouleme.fr    +#+  +:+       +#+        */
+/*   By: jfarkas <jfarkas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/30 19:26:54 by jfarkas           #+#    #+#             */
-/*   Updated: 2023/07/23 15:14:23 by jfarkas          ###   ########.fr       */
+/*   Updated: 2023/07/23 20:46:33 by jfarkas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ t_result	test(int child_in, int child_out, int child_error, int valg_out, t_test
 	if (test->index == 1)
 		usleep(100000);
 	usleep(20000); // echo lent ??
-	res.prompt = get_prompt(child_out, test->cmd, 10); // jsuis trop con y'a pas tt le temps de newline faut refaire gnl
+	res.prompt = get_prompt(child_out, test->cmd, 1000); // jsuis trop con y'a pas tt le temps de newline faut refaire gnl
 	printf("prompt : %s\n", res.prompt);
 	// if (res.prompt)
 	// {
@@ -113,9 +113,9 @@ int main(int argc, char **argv, char **envp)
 	// char	*minishell = "/bin/valgrind --log-fd=9  --leak-check=full ./minishell/minishell";
 	// char	*minishell = "/bin/valgrind --log-fd=9 /bin/bash -i"; // mettre le fd dynamiquement
 	// char	*minishell = "/bin/bash -i"; // mettre le fd dynamiquement
-	// char	*minishell = "/bin/valgrind --log-fd=9 --leak-check=full --show-leak-kinds=all --trace-children=yes --track-fds=yes --suppressions=../minishell/vsupp ./minishell/minishell_damien";
+	char	*minishell = "/bin/valgrind --log-fd=9 --leak-check=full --show-leak-kinds=all --trace-children=yes --track-fds=yes --suppressions=./minishell/vsupp ./minishell/minishell_damien";
 	// char	*minishell = "/bin/valgrind --log-fd=9 --leak-check=full --show-leak-kinds=all --suppressions=../minishell/vsupp /bin/bash -i";
-	char	*minishell = "./minishell/minishell_damien";
+	// char	*minishell = "./minishell/minishell_damien";
 	char	**cmd_line = ft_split(minishell, ' ');
 	char	*line;
 	int		tests_file;

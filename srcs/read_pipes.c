@@ -82,7 +82,10 @@ char	*get_prompt(int fd, char *cmd, int msec)
 	timeout = 0;
 	while ((!new_line || (new_line && !strstr(new_line, cmd))) && !timeout)
 	{
-		// printf("try : %s\n", new_line);
+		// if (!new_line)
+		// 	printf("try : %s\n", new_line);
+		// else
+		// 	printf("try : %s", new_line);
 		gettimeofday(&tv2, NULL);
 		elapsed_time = (tv2.tv_sec - tv1.tv_sec) * 1000;
 		elapsed_time += (tv2.tv_usec - tv1.tv_usec) / 1000;
