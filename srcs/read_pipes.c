@@ -94,6 +94,8 @@ char	*get_prompt(int fd, char *cmd, int msec)
 		new_line = get_next_line(fd);
 		usleep(1000);
 	}
+	if (timeout)
+		printf("prompt timeout :(\n");
 	return (new_line);
 }
 
@@ -146,6 +148,7 @@ void	get_answer(int std_fd, int error_fd, t_result *res, int mult_lines, int mse
 	tmp = NULL;
 	new_line = NULL;
 	struct timeval tv1, tv2;
+	gettimeofday(&tv1, NULL);
 	new_line = get_first_line(std_fd, error_fd, &fd, msec);
 	str = ft_strjoin(str, new_line);
 	usleep(500);

@@ -5,6 +5,7 @@
 # -cmd="echo bonjour" -timeout=10 -res=cmp("bonjour"); -cmd="export toto=lol" -res=no_answer(); -cmd="export" -timeout=10 -res=find(toto);
 #lol;lol;lol;lol;lol;lol;lol;lol;exit
 #sfdgufds;lol1;long answer;lol2;jsp;lol3;lol4;wowo;invalid write;lol;exit
+valgrind:				--leak-check=full --show-leak-kinds=all -track-fds=yes
 export toto="a   b" 	<<<<>>>>	-no_answer
 export 					<<<<>>>>	-result="\"a   b\""
 cat out 				<<<<>>>>	-result=""
@@ -12,14 +13,15 @@ echo $?					<<<<>>>>	-result="1"
 ls > out2				<<<<>>>>	-no_answer
 cat out2 				<<<<>>>>	-result="   "
 echo $?					<<<<>>>>	-result="0"
-<< stop	       			<<<<>>>>	-no_answer
+cat << stop				<<<<>>>>	-no_answer
 lol1					<<<<>>>>	-no_answer
 lol2					<<<<>>>>	-no_answer
-'$toto'					<<<<>>>>	-no_answer
-stop					<<<<>>>>	-no_answer
+"$toto"					<<<<>>>>	-no_answer
+stop					<<<<>>>>
 echo $toto				<<<<>>>>	-result="a b"
 echo "$toto"			<<<<>>>>	-result="a   b"
 echo '$toto'			<<<<>>>>	-result="$toto"
+ls | ls | ls			<<<<>>>>
 #echo -nnnnn salut		<<<<>>>>
 export $toto=$toto		<<<<>>>>
 export 78 abc			<<<<>>>>
@@ -29,4 +31,8 @@ export jsp				<<<<>>>>	-no_answer
 export					<<<<>>>>	-result="jsp"
 ls						<<<<>>>>
 rm out2                 <<<<>>>>    -no_answer
+						<<<<>>>>	-signal="CTRL C"
+echo $?					<<<<>>>>
+echo $?					<<<<>>>>
+echo coucou				<<<<>>>>
 exit					<<<<>>>>	-no_answer

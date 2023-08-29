@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line_bonus.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jfarkas <jfarkas@student.42.fr>            +#+  +:+       +#+        */
+/*   By: jfarkas <jfarkas@student.42angouleme.fr    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/09 04:51:04 by jfarkas           #+#    #+#             */
-/*   Updated: 2023/05/07 20:11:51 by jfarkas          ###   ########.fr       */
+/*   Updated: 2023/08/28 04:33:50 by jfarkas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,6 +75,8 @@ char	*get_line(int fd, int *rd, char *buff)
 	return (line);
 }
 
+#include <stdio.h>
+
 char	*get_next_line(int fd)
 {
 	char		*line;
@@ -88,5 +90,7 @@ char	*get_next_line(int fd)
 	if (line == NULL)
 		return (NULL);
 	update_buff(buff[fd]);
+	// if (ft_strnstr(line, "dumped", 100))
+	// 	printf("buffer : %s\n", buff[fd]);
 	return (line);
 }

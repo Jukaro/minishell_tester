@@ -4,11 +4,11 @@ t_parameters	init_parameters(int argc, char **argv)
 {
 	t_parameters p;
 
-	p.valgrind = 0;
-	p.answers = 0;
+	p.valgrind = 1;
+	p.answers = 1;
 	p.test = 1;
 
-	p.valg_timeout = 15;
+	p.valg_timeout = 50;
 	p.answer_timeout = 1000;
 	p.valgrind_line = NULL;
 	return (p);

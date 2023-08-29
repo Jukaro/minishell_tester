@@ -14,6 +14,7 @@
 # include <time.h>
 # include <sys/time.h>
 # include <errno.h>
+# include <signal.h>
 
 # include "../libft/libft.h"
 
@@ -46,6 +47,7 @@ typedef struct	s_test
 	int				timeout;
 	int				need_answer;
 	int				check_method;
+	int				signal;
 	int				index;
 	struct s_test	*next;
 }	t_test;
@@ -74,6 +76,7 @@ char			*get_prompt(int fd, char *cmd, int msec);
 
 /* ------------------------------ print_results ----------------------------- */
 
+void			print_expected(t_test *test, t_result *res, t_parameters *p);
 void			print_result(t_result *res, t_parameters *p);
 int				check_valgrind_errors(t_result *res, int main_id, int valg_out);
 
@@ -87,6 +90,7 @@ int				ft_testsize(t_test *lst);
 /* --------------------------------- parsing -------------------------------- */
 
 int				get_method(char *str);
+int				get_signal(char *str);
 char			*ft_strchrset(char *str, char *set);
 int				is_in_set(char c, char *charset);
 int				skip_quotes(char *str, char quote);

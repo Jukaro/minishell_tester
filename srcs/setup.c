@@ -16,6 +16,9 @@ static void	setup_pipes(int request[2], int child_out[2], int child_error[2], in
 
 void	start_minishell(char **cmd_line, char **envp, pid_t *pid, int request[2], int child_out[2], int child_error[2], int valgrind[2])
 {
+	// int	fd;
+
+	// fd = open("lol", O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	setup_pipes(request, child_out, child_error, valgrind);
 	if ((*pid = fork()) == -1)
 		perror("fork");
@@ -29,6 +32,9 @@ void	start_minishell(char **cmd_line, char **envp, pid_t *pid, int request[2], i
 		close(child_error[0]);
 		close(valgrind[0]);
 		close(request[1]);
+
+		// dup2(fd, 1);
+		// dup2(fd, 2);
 		if (execve(cmd_line[0], cmd_line, envp) == -1)
 			perror("execve");
 		exit(1);

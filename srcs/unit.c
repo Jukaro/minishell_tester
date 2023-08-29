@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   unit.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jfarkas <jfarkas@student.42.fr>            +#+  +:+       +#+        */
+/*   By: jfarkas <jfarkas@student.42angouleme.fr    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/30 19:26:54 by jfarkas           #+#    #+#             */
-/*   Updated: 2023/07/23 20:46:33 by jfarkas          ###   ########.fr       */
+/*   Updated: 2023/08/28 04:30:14 by jfarkas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 # include "../includes/tester.h"
 
-t_result	test(int child_in, int child_out, int child_error, int valg_out, t_test *test, t_parameters p)
+t_result	test(int child_in, int child_out, int child_error, int valg_out, t_test *test, t_parameters p, pid_t pid)
 {
 	t_result	res;
 	char	*request;
@@ -25,16 +25,29 @@ t_result	test(int child_in, int child_out, int child_error, int valg_out, t_test
 		ft_printf("%d - Testing %s ...\n", test->index, test->cmd);
 	request = ft_strjoin(test->cmd, "\n");
 	// printf("request : %s\n", request);
-	ft_putstr_fd(request, child_in);
+	usleep(10000);
+	if (test->cmd[0])
+		ft_putstr_fd(request, child_in);
 	free(request);
 	// printf("getting prompt.\n");
 	if (test->index == 1)
-		usleep(100000);
+		usleep(1000000);
 	usleep(20000); // echo lent ??
-	res.prompt = get_prompt(child_out, test->cmd, 1000); // jsuis trop con y'a pas tt le temps de newline faut refaire gnl
+	if (test->cmd[0])
+		res.prompt = get_prompt(child_out, test->cmd, 50); // jsuis trop con y'a pas tt le temps de newline faut refaire gnl
 	printf("prompt : %s\n", res.prompt);
 	// if (res.prompt)
 	// {
+		if (test->signal)
+		{
+			usleep(1000);
+			if (test->signal > 0)
+				kill(pid, test->signal);
+			usleep(1000);
+			// return (res);
+		}
+		if (!test->cmd[0])
+			return (res);
 		if (!test->need_answer)
 		{
 			if (p.valgrind)
@@ -42,7 +55,7 @@ t_result	test(int child_in, int child_out, int child_error, int valg_out, t_test
 				if (!ft_strncmp(test->cmd, "exit", 4))
 					res.valgrind = get_str_from_fd(valg_out, 1, p.valg_timeout);
 				else
-					res.valgrind = get_str_from_fd(valg_out, 1, 50);
+					res.valgrind = get_str_from_fd(valg_out, 1, 200);
 			}
 			return (res);
 		}
@@ -52,7 +65,7 @@ t_result	test(int child_in, int child_out, int child_error, int valg_out, t_test
 			if (!ft_strncmp(test->cmd, "exit", 4))
 				res.valgrind = get_str_from_fd(valg_out, 1, p.valg_timeout);
 			else
-				res.valgrind = get_str_from_fd(valg_out, 1, 50);
+				res.valgrind = get_str_from_fd(valg_out, 1, 200);
 		}
 	// }
 	return (res);
@@ -72,15 +85,16 @@ void	test_line(char **cmd_line, t_test **tests, char **envp, t_parameters p)
 	t_result	res;
 
 	start_minishell(cmd_line, envp, &pid, request, child_out, child_error, valgrind);
-	usleep(500 * 1000);
+	// usleep(500 * 1000);
 	error_count = 0;
 	tests_nb = ft_testsize(*tests);
 	if (p.valgrind)
 		main_valgrind_id = print_valgrind_start(valgrind[0]);
 	for (t_test *ptr = *tests; ptr; ptr = ptr->next)
 	{
-		res = test(request[1], child_out[0], child_error[0], valgrind[0], ptr, p);
+		res = test(request[1], child_out[0], child_error[0], valgrind[0], ptr, p, pid);
 		print_result(&res, &p);
+		print_expected(ptr, &res, &p);
 		error = check_valgrind_errors(&res, main_valgrind_id, valgrind[0]);
 		if (error == 2)
 			break ;
@@ -113,9 +127,10 @@ int main(int argc, char **argv, char **envp)
 	// char	*minishell = "/bin/valgrind --log-fd=9  --leak-check=full ./minishell/minishell";
 	// char	*minishell = "/bin/valgrind --log-fd=9 /bin/bash -i"; // mettre le fd dynamiquement
 	// char	*minishell = "/bin/bash -i"; // mettre le fd dynamiquement
-	char	*minishell = "/bin/valgrind --log-fd=9 --leak-check=full --show-leak-kinds=all --trace-children=yes --track-fds=yes --suppressions=./minishell/vsupp ./minishell/minishell_damien";
+	// char	*minishell = "/bin/valgrind --log-fd=9 --leak-check=full --show-leak-kinds=all --track-fds=yes --suppressions=./minishell/vsupp ./minishell/minishell_parrot";
 	// char	*minishell = "/bin/valgrind --log-fd=9 --leak-check=full --show-leak-kinds=all --suppressions=../minishell/vsupp /bin/bash -i";
 	// char	*minishell = "./minishell/minishell_damien";
+	char	*minishell = "/bin/valgrind --log-fd=9 --leak-check=full --show-leak-kinds=all --suppressions=../minishell/vsupp ../minishell/minishell";
 	char	**cmd_line = ft_split(minishell, ' ');
 	char	*line;
 	int		tests_file;
@@ -131,7 +146,7 @@ int main(int argc, char **argv, char **envp)
 
 	// gerer les signaux SIGINT et autres
 
-	tests = parse_testfile("test.txt", &p);
+	tests = parse_testfile("echo.txt", &p);
 
 	// int	i = 0;
 	// for (t_test *ptr = *tests; ptr; ptr = ptr->next)

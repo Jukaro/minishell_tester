@@ -109,3 +109,17 @@ char	*get_result(char *str)
 	free(res);
 	return (final_res);
 }
+
+int	get_signal(char *str)
+{
+	char	*sig;
+
+	sig = get_result(str);
+	if (!strcmp("CTRL C", sig))
+		return (SIGINT);
+	else if (!strcmp("CTRL \\", sig))
+		return (SIGQUIT);
+	else if (!strcmp("CTRL D", sig))
+		return (EOF);
+	return (0);
+}

@@ -1,0 +1,5 @@
+echo salut					<<<<>>>> -result="salut"
+echo salut					<<<<>>>> -result="salut"
+echo salut					<<<<>>>> -result="salut"
+cat lol						<<<<>>>>
+exit						<<<<>>>>
